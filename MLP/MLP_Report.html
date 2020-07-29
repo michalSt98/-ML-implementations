@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michal_Stawikowski_MLP_Raport</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h4 id="michał-stawikowski-291138">Michał Stawikowski 291138</h4>
+<h1 id="mlp-report">MLP Report</h1>
+<p>In this report, I will summarize all the experiments that I conducted on the neural network that I implemented. The document is divided into paragraphs in the order of the laboratories.</p>
+<h2 id="basic-implementation">1. Basic Implementation</h2>
+<p>In this part, we have implemented a simple MLP network model. Using the <strong>feed forward</strong> function and manually selected weights, we will try to perform prediction on two data sets using different network architectures. I used <strong>sigmoidal</strong> activation functions for hidden layers and <strong>linear</strong> for output.</p>
+<h3 id="square-simple">Square Simple</h3>
+<p><img src="https://i.ibb.co/x1HHr4Y/pobrane-1.png" alt="square simple"></p>
+<h3 id="steps-large">Steps Large</h3>
+<p><img src="https://i.ibb.co/SrsTBrm/pobrane.png" alt="steps large"></p>
+<p>In the case of the first data set, the weights were randomly assigned from a normal standard distribution with a slight modification, the second time I tried to choose the weights manually to obtain the best fit. As you can see in the charts above, it is quite a breakneck task and it is easier to use proven methods such as backward error propagation, which we will go to in the next paragraph.</p>
+<h2 id="backpropagation">2. Backpropagation</h2>
+<p>In this part, we’ll look at the operation and assess the effectiveness of the function we implemented for backward error propagation that will enable us to learn from data. In addition, we will consider different ways to initialize weights and test batch learning.</p>
+<h3 id="simple-testing">Simple testing</h3>
+<p>I will carry out simple tests for various data sets for <strong>100 learning epochs</strong>, a <strong>learning rate of 0.1</strong> and weights <strong>initialization from normal</strong> standarized distibution. I will give the network architecture as the initialization code.</p>
+<h4 id="sinus-function">Sinus function</h4>
+<pre><code>layers=[1, 100, 50, 1],
+activations=['sigmoid','sigmoid','linear']
+</code></pre>
+<p><img src="https://i.ibb.co/Y3hS8Qg/pobrane-2.png" alt="Sinus"></p>
+<h4 id="square-simple-1">Square simple</h4>
+<pre><code>layers=[1, XXX, 1],activations=['sigmoid', 'linear'],
+init = "normal"
+</code></pre>
+<ul>
+<li>10 neurons<br>
+<img src="https://i.ibb.co/B2ntrXx/pobrane-3.png" alt="enter image description here"></li>
+<li>100 neurons<br>
+<img src="https://i.ibb.co/vhbGnPK/pobrane-4.png" alt="enter image description here"></li>
+</ul>
+<p>As we can often see, the number of neurons has a big impact on the fit of the network.</p>
+<h4 id="square-small">Square Small</h4>
+<pre><code> layers=[1, 1000, 1],activations=['sigmoid', 'linear'],
+ init = "normal"
+</code></pre>
+<p><img src="https://i.ibb.co/LPxNcyh/pobrane-5.png" alt="enter image description here"></p>
+<h4 id="multimodal-large">Multimodal large</h4>
+<pre><code> layers=[1, 10, 1],activations=['sigmoid', 'linear'],
+ init = "normal"
+</code></pre>
+<p><img src="https://i.ibb.co/qBgSdWm/pobrane-6.png" alt="enter image description here"></p>
+<p>We see that the network learns and can map simple data sets.</p>
+<h3 id="different-ways-of-weights-inizialization">Different ways of weights inizialization</h3>
+<p>I will now present the results of learning a network on multimodal-large dataset using different ways to initialize weights. These will be initialization from the standard <strong>normal</strong> distribution, <strong>uniform</strong> distribution [-1.1] (when using [0.1], a gradient explodes and very poor results are achieved), <em><strong>He</strong></em> and <em><strong>Xavier</strong></em> initialization.</p>
+<p><img src="https://i.ibb.co/bRkbLp6/pobrane-8.png" alt="enter image description here"></p>
+<p>As we can see the results are quite similar. Different of these initialization methods are good for specific network architectures and problems being considered. From these results we can conclude that the method of initialization is not the most important parameter of the network.</p>
+<h3 id="batch-learning">Batch learning</h3>
+<p>We will now compare the learning speed of a neural network with SGD by considering learning with different batch sizes. I will use multimodal-large dataset which has 10 000 records.</p>
+<pre><code>layers=[1, 20, 30, 1],
+activations=['sigmoid', 'sigmoid', 'linear']
+</code></pre>
+<p><code>epochs=100, lr = .01, batch_size = XXX</code></p>
+<p><img src="https://i.ibb.co/mFNyTQm/pobrane-9.png" alt="enter image description here"></p>
+<p>In the chart above, we can see the convergence speed of the network using different batch sizes. The batch 1 network had serious convergence issues probably becouse of too small batch size. Others managed to achieve satisfactory results. You can see that batch size 32 is recommended for the default setting. Networks with batch size 32 and 1000 converge faster compared to a non-batch network. However, it seems that a non-batch network has a smaller error variance at the end of learning.</p>
+<h2 id="gradient-descent-optimization-algorithms">3.    Gradient descent optimization algorithms</h2>
+<p>We will now optimize neural network learning. The previously introduced  <strong>Stochastic Gradinet Descent</strong>, combined with <strong>batch learning</strong>, will be compared to learning with <strong>Momentum</strong> and <strong>RMSProp</strong> on three different datasets. Finally, we will add the <strong>ADAM</strong> algorithm.</p>
+<h3 id="square-large">Square large</h3>
+<p>Network parameters used for training:</p>
+<pre><code>layers=[1, 15, 1],activations=['sigmoid', 'linear']
+epochs=100, lr = .01, batch_size = 32
+</code></pre>
+<p>In case of Momentum, RMSProp and Adam I will use blanking parameter equal to 0.9 as it is suggested.</p>
+<p><img src="https://i.ibb.co/vh5YY8W/pobrane-10.png" alt="enter image description here"></p>
+<h3 id="steps-large-1">Steps large</h3>
+<p><img src="https://i.ibb.co/VHMcLKc/pobrane-11.png" alt="enter image description here"></p>
+<h3 id="multimodal-large-1">Multimodal Large</h3>
+<p><img src="https://i.ibb.co/Wp8Yj9m/pobrane-12.png" alt="enter image description here"></p>
+<p>We see that the algorithms cope differently with different data and with slightly changed parameters. Theoretically, momentum and RMSProp should usually significantly accelerate convergence, but maybe it also depends on the network architecture used, simple data sets, or implementation in connection with batch learning. SGD itself was usually doing very well, although there were cases where one of the new algorithms overtook it.</p>
+<h3 id="comparison-with-adam">Comparison with ADAM</h3>
+<p>We will also compare earlier algorithms with the ADAM algorithm, which is a combination of the idea of ​​momentum and RMSProp. Blanking parameter will be set to 0.8.</p>
+<p><img src="https://i.ibb.co/WvCyrTj/pobrane-13.png" alt="enter image description here"></p>
+<p>This time ADAM and momentum beat SGD mini batch. The Adam optimization algorithm is an extension to stochastic gradient descent that has recently seen broader adoption for deep learning applications in computer vision and natural language processing.</p>
+<blockquote>
+<p>Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods.</p>
+</blockquote>
+<h2 id="classification-and-softmax">4.   Classification and Softmax</h2>
+<p>In order to test the new activation function - <strong>softmax</strong> - I will perform <strong>classification</strong> using SGD mini batch on the three following data sets. It will be compared with the <strong>sigmoid</strong> function. Before training, I standardized data and encoded it - one hot encoding. The loss function that I will consider is <strong>Crossentropy / Log loss</strong>, which works well for multi-class classification. Finally, I will visualize data and prediction and calculate accuracy.</p>
+<p>Network architecture used during this part:</p>
+<pre><code>layers=[2, 10, 20, 10, 2],
+activations=['tanh','tanh','tanh','sigmoid/softmax']
+epochs=500, lr = 0.01, batch_size = 32
+</code></pre>
+<h3 id="rings-3-regular">Rings 3 Regular</h3>
+<ul>
+<li>Loss comparison</li>
+</ul>
+<p><img src="https://i.ibb.co/jJKPyd1/pobrane-14.png" alt="enter image description here"></p>
+<ul>
+<li>Data visualization</li>
+</ul>
+<p><img src="https://i.ibb.co/CbxLgQC/pobrane-15.png" alt="enter image description here"></p>
+<ul>
+<li>Prediction Error Visualisation</li>
+</ul>
+<p><img src="https://i.ibb.co/cJPwCBy/pobrane-16.png" alt="enter image description here"></p>
+<ul>
+<li>Accuracy : <strong>0.948</strong></li>
+</ul>
+<h3 id="easy">Easy</h3>
+<ul>
+<li>Loss Comparison</li>
+</ul>
+<p><img src="https://i.ibb.co/ch1gFv6/pobrane-17.png" alt="enter image description here"></p>
+<ul>
+<li>Data visualization</li>
+</ul>
+<p><img src="https://i.ibb.co/rkQb6vT/pobrane-18.png" alt="enter image description here"></p>
+<ul>
+<li>Prediction Error Visualisation</li>
+</ul>
+<p><img src="https://i.ibb.co/tQWqdZg/pobrane-19.png" alt="enter image description here"></p>
+<ul>
+<li>Accuracy: <strong>0.996</strong></li>
+</ul>
+<h3 id="xor3">XOR3</h3>
+<ul>
+<li>Loss Comparison</li>
+</ul>
+<p><img src="https://i.ibb.co/vsgXz4D/pobrane-20.png" alt="enter image description here"></p>
+<ul>
+<li>Data visualization</li>
+</ul>
+<p><img src="https://i.ibb.co/CVQSB9Z/pobrane-21.png" alt="enter image description here"></p>
+<ul>
+<li>Prediction Error Visualisation</li>
+</ul>
+<p><img src="https://i.ibb.co/VTLPbgb/pobrane-22.png" alt="enter image description here"></p>
+<ul>
+<li>Accuracy: <strong>0.926</strong></li>
+</ul>
+<h3 id="summary">Summary</h3>
+<p>The neural network which was using Softmax performed better on all three given data sets. It was faster and more accurate, although Sigmoid also performed well. On average, we obtained 95% accuracy, which is a good result for a not very complicated network.</p>
+<h2 id="testing-various-activation-functions">5.   Testing various activation functions</h2>
+<p>In order to test the new activation functions - <strong>sigmoid</strong>, <strong>linear</strong>, <strong>tanh</strong> and <strong>ReLU</strong> - I have performed classification and regression on four following data sets. Each function was tested with a different number of hidden layers: 1,2,3 with an increasing number of neurons used. In case of classification before training, I have standardized the data and encoded it - one hot encoding. As an output activation function i have used softmax for classification and linear for regression. The loss function that I will consider for classification is Crossentropy / Log loss, which works well for multi-class classification and MSE for regression. Finally, I will summarise results.</p>
+<p>Network parameters used for training:</p>
+<pre><code>  layers=[1, 10, 1],activations=[function,"linear"/"softmax"]
+  epochs=200, lr = lrs, batch_size = 32
+
+  layers=[1, 10, 20, 1],
+  activations=[function,function,"linear"/"softmax"]
+  epochs=200, lr = lrs, batch_size = 32
+
+  layers=[1, 10, 20, 10, 1],
+  activations=[3xfunction,"linear"/"softmax"]
+  epochs=200, lr = lrs, batch_size = 32
+</code></pre>
+<h3 id="classification">Classification</h3>
+<h4 id="rings-3-regular-1">Rings 3 Regular</h4>
+<p><img src="https://i.ibb.co/6vn58p5/Bez-tytu-u.png" alt="enter image description here"></p>
+<p>In this classification task and with this fixed architecture, tanh and sigmoid functions fared best with the advantage of the latter in terms of speed of convergence. Usually a larger number of layers resulted in better convergence, but the ReLU and Linear functions that are not adapted to the classification had convergence problems. The number of neurons and hidden layers had different effects on the learning process. Sometimes a larger number gave better results - tanh - sometimes not - relu and linear.</p>
+<h4 id="rings-5-regular">Rings 5 Regular</h4>
+<p><img src="https://i.ibb.co/Bn4Ym2p/Bez-tytu-u2.png" alt="enter image description here"></p>
+<p>In this case we achieved similiar results as in previous version, but here all the smallest networks did the best.</p>
+<h3 id="regression">Regression</h3>
+<h4 id="steps-large-2">Steps large</h4>
+<p><img src="https://i.ibb.co/VQNt8kV/Bez-tytu-u3.png" alt="enter image description here"></p>
+<p>In case of regression we can see, that with this architecture of neural net all functions gave similiar results, but sigmoid was the best. Linear and relu had some realy hard time converging. On the first plot we can observe something iteresting for 3 layers net, it had worse results than 1 and 2 layers versions. In case of relu and linear 1 layer version has big problem at the beggining, but other two did pretty well. For this two models - relu and linear - I had to lower learning rate becouse of gradient explosion.</p>
+<h4 id="multimodal-large-2">Multimodal large</h4>
+<p><img src="https://i.ibb.co/VQNt8kV/Bez-tytu-u3.png" alt="enter image description here"></p>
+<p>This time we can see again this interesting peak in 3 layers tanh version. Sigmoid did the best job.</p>
+<h3 id="summary-1">Summary</h3>
+<p>In terms of classification and regression using this fixed architecture tanh and sigmoid did quite good. Linear and relu functions had some trouble and didn’t converge as fast as the previous two. This may be due to the architecture of the network I used and the parameters passed to it. The number of neurons and hidden layers had different effects on the learning process.</p>
+<p>Bonus question: The ReLU activation function g(z) = max{0, z} is not differentiable at z = 0. A function is differentiable at a particular point if there exist left derivatives and right derivatives and both the derivatives are equal at that point. ReLU is differentiable at all the point except 0. the left derivative at z = 0 is 0 and the right derivative is 1. On the other hand, software implementations of neural network training usually return one of the one-sided derivatives rather than reporting that the derivative is not defined or raising an error. This may be heuristically justified by observing that gradient-based optimization on a digital computer is subject to numerical error anyway. When a function is asked to evaluate g(0), it is very unlikely that the underlying value truly was 0 . Instead, it was likely to be some small value that was rounded to 0 . In some contexts, more theoretically pleasing justifications are available, but these usually do not apply to neural network training. The important point is that in practice one can safely disregard the non-differentiability of the hidden unit activation functions. We can use subgradient too or at 0 return 1 as I did. (source: Kanchan Sarkar article on Medium)</p>
+<h2 id="overfitting-and-regularization">6. Overfitting and regularization</h2>
+<p>In this part of the report we will deal with regularization. In order to deal with the phenomenon of overfitting, I have implemented several methods that can help us with this. These are <strong>early stopping</strong> of learning in the absence of a decrease in the loss function on the validation set, <strong>L2</strong>, <strong>L1</strong> regularization and artificial <strong>weight reduction</strong>. The last implemented method is <strong>dropout</strong>. I will now present these methods and compare them on sample data sets when it comes to the phenomenon of overfitting.</p>
+<h3 id="early-stopping">Early stopping</h3>
+<p>Architecture and parameters used:</p>
+<pre><code>layers=[2, 10, 20, 10, 3],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss", early_stopping = True, 
+iter_with_no_change = 20,  tol = 1e-4
+epochs = 500, lr = 0.01, batch_size = 32
+</code></pre>
+<p>Where tol parameter describe tolerance of error on validation data and iter_with_no_change describe how many epochs without improvement must ocure to end training earlier. We will use 2:8 proportion of validation:training set.</p>
+<p><img src="https://i.ibb.co/s3GNBK1/pobrane-23.png" alt="enter image description here"></p>
+<p>Early stop at: 123 from 500 epochs</p>
+<p>The training process was carried out on the rings 3-balance set, as we can see early stopping, meant that the learning process ended when the loss function ceased to decrease on the validation set, thanks to this operation we can avoid overfiting. At the end of training we choose weights which got the best score on validation data.</p>
+<h3 id="regularization">Regularization</h3>
+<p>Weight regularization provides an approach to reduce the overfitting of a deep learning neural network model on the training data and improve the performance of the model on new data, such as the holdout test set.</p>
+<p>In this part, we present how regularization affects the learning process on a training and validation set. We will use 4 different data sets, <strong>lambda</strong> parameter for L1 and L2 regularization is set to <strong>0.01</strong> and is also used in weights reduction. Architecure of network is same as in previous experiment.</p>
+<h3 id="classifcation">Classifcation</h3>
+<h4 id="rings-3-balance">Rings 3 balance</h4>
+<h5 id="loss-on-training-data">Loss on Training data</h5>
+<p><img src="https://i.ibb.co/tJ5PGzX/pobrane-24.png" alt="enter image description here"></p>
+<h5 id="loss-on-validation-data">Loss on Validation data</h5>
+<p><img src="https://i.ibb.co/QQFDhJF/pobrane-25.png" alt="enter image description here"></p>
+<h4 id="xor3-balance">XOR3 balance</h4>
+<h5 id="loss-on-training-data-1">Loss on Training data</h5>
+<p><img src="https://i.ibb.co/d59LY2S/pobrane-26.png" alt="enter image description here"></p>
+<h5 id="loss-on-validation-data-1">Loss on Validation data</h5>
+<p><img src="https://i.ibb.co/wRm0hrH/pobrane-27.png" alt="enter image description here"></p>
+<h4 id="rings5-sparse">Rings5 Sparse</h4>
+<h5 id="loss-on-training-data-2">Loss on Training data</h5>
+<p><img src="https://i.ibb.co/XLNLP39/pobrane-30.png" alt="enter image description here"></p>
+<h5 id="loss-on-validation-data-2">Loss on Validation data</h5>
+<p><img src="https://i.ibb.co/wwV0NBr/pobrane-31.png" alt="enter image description here"></p>
+<h3 id="regression-1">Regression</h3>
+<p>Architecture changes:</p>
+<pre><code>activations=['sigmoid', 'sigmoid', 'sigmoid', 'linear'],
+loss = "mse"
+</code></pre>
+<p>We will also exclude artificial weight reduction from the next tests, because tit achieved much worse results than the other three.</p>
+<h4 id="multimodal-sparse">Multimodal Sparse</h4>
+<h5 id="loss-on-training-data-3">Loss on Training data</h5>
+<p><img src="https://i.ibb.co/pJy8TJ1/pobrane-28.png" alt="enter image description here"></p>
+<h5 id="loss-on-validation-data-3">Loss on Validation data</h5>
+<p><img src="https://i.ibb.co/gRwvTKD/pobrane-29.png" alt="enter image description here"></p>
+<h3 id="dropout">Dropout</h3>
+<p>Architecture changes for dropout:</p>
+<pre><code>layers=[2, 20, 30, 20, 3], dropprob = 0.5
+</code></pre>
+<p>In order to examine the dropout, we increased the number of neurons in the network and set the probability of losing them at 50%.</p>
+<p><img src="https://i.ibb.co/vLmkTYT/pobrane-32.png" alt="enter image description here"></p>
+<h3 id="summary-2">Summary</h3>
+<p>Regularization is a method that helps prevent overfiting by limiting weight. It should improve the model’s performance on data it did not learn, on the other hand, it can sometimes slow down and weaken learning on a training set by imposing weight restrictions. I usually received these results from my observations. Regularization often slowed down learning on the learning set, but helped to get better results on validation sets. This is particularly well seen in examples with classification. In the case of the regression example, the influence of regularization is not quite visible, it may be due to the type of architecture or data set.  All types of regularization achieved quite good results in the case of classification on validation sets, however, on the training set artificial weight reduction usually did the worst.</p>
+<p>Dropout, in turn, is a fairly popular solution often used for large neural networks, they prevent their overfitting by creating a more general model, by switching off some randomly selected neurons while learning. In our experiment, he did quite well on the validation set compared to the rest of the algorithms, but it required finding good parameters.</p>
+<h3 id="what-regularization-can-give-us">What regularization can give us</h3>
+<p>I will now conduct an experiment that will involve learning two networks on a training set and testing their effectiveness on a test set. The first one will not have any regularization methods, while in the second case I will use early stopping and L2, L1 regularization.</p>
+<h4 id="classification-1">Classification</h4>
+<h4 id="rings3-balance">Rings3 balance</h4>
+<h5 id="without-regularization">Without regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 3],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss"
+</code></pre>
+<p><img src="https://i.ibb.co/87Q1tRh/pobrane-33.png" alt="enter image description here"><br>
+Logloss for test data prediction:<br>
+2.2906160218032094</p>
+<h5 id="with-regularization">With regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 3],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss",early_stopping = True, 
+iter_with_no_change = 20,  tol = 1e-4, l2 = True,
+reg_lambda = 0.01
+</code></pre>
+<p><img src="https://i.ibb.co/WK8JLqk/pobrane-34.png" alt="enter image description here"><br>
+Early stop at: 29  from 300 epochs<br>
+Logloss for test data prediction:<br>
+1.5598496309141954</p>
+<h4 id="xor3-balance-1">XOR3 balance</h4>
+<h5 id="without-regularization-1">Without regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 2],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss"
+</code></pre>
+<p><img src="https://i.ibb.co/4RQjqty/pobrane-35.png" alt="enter image description here"></p>
+<p>Logloss for test data prediction:<br>
+2.123735393446319</p>
+<h5 id="with-regularization-1">With regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 2],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss",early_stopping = True, 
+iter_with_no_change = 20,  tol = 1e-4, l1 = True,
+reg_lambda = 0.01
+</code></pre>
+<p><img src="https://i.ibb.co/9qYgtSc/pobrane-36.png" alt="enter image description here"></p>
+<p>Early stop at: 22  from 300 epochs<br>
+Logloss for test data prediction:<br>
+1.3432507048528666</p>
+<h4 id="rings-5-sparse">Rings 5 sparse</h4>
+<h5 id="without-regularization-2">Without regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 5],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss"
+</code></pre>
+<p><img src="https://i.ibb.co/N26j4hL/pobrane-37.png" alt="enter image description here"></p>
+<p>Logloss for test data prediction:<br>
+1.2617059431496938</p>
+<h5 id="with-regularization-2">With regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[2, 10, 20, 10, 5],
+activations=['tanh','tanh','tanh','softmax'],
+init = "normal", loss_f = "logloss",early_stopping = True, 
+iter_with_no_change = 20,  tol = 1e-4, l1 = True,
+reg_lambda = 0.01
+</code></pre>
+<p><img src="https://i.ibb.co/T0MXM4M/pobrane-38.png" alt="enter image description here"></p>
+<p>Logloss for test data prediction:<br>
+1.142853937249487</p>
+<h3 id="regression-2">Regression</h3>
+<h4 id="multimodal-sparse-1">Multimodal sparse</h4>
+<h5 id="without-regularization-3">Without regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[1, 10, 20, 10, 1],
+activations=['sigmoid', 'sigmoid', 'sigmoid', 'linear'],
+init = "normal", loss_f = "mse"
+</code></pre>
+<p><img src="https://i.ibb.co/w4sTqvg/pobrane-39.png" alt="enter image description here"></p>
+<p>MSE for test data prediction:<br>
+1112.9875215272953</p>
+<h5 id="with-regularization-3">With regularization</h5>
+<p>Network architecture:</p>
+<pre><code>layers=[1, 10, 20, 10, 1],
+activations=['sigmoid', 'sigmoid', 'sigmoid', 'linear'],
+init = "normal", loss_f = "mse",early_stopping = True, 
+iter_with_no_change = 20,  tol = 1e-4, l1 = True,
+reg_lambda = 0.01
+</code></pre>
+<p><img src="https://i.ibb.co/dDrY94V/pobrane-40.png" alt="enter image description here"></p>
+<p>Early stop at: 82 epochs<br>
+MSE for test data prediction:<br>
+706.4518303565674</p>
+<h2 id="summary-3">Summary</h2>
+<p>As you can see from the above results, regularization has helped our networks not over-adapt to learning data. During the experiments there were also such results when the model without regularization obtained better results. Early stopping often stopped our learning when we were no longer getting better.</p>
+<h1 id="final-thoughts">Final thoughts</h1>
+<p>We managed to build a neural network algorithm that is able to learn from a data set, carry out classification and regression, and has the ability to deal with overfitting. Thanks to the applied optimization of gradient learning and various methods of initialization of weights and activation function, the network learns quite quickly and achieves satisfactory results on simple datasets.</p>
+</div>
+</body>
+
+</html>
